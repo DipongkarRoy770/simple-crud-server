@@ -38,10 +38,32 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/users/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await userConection.findOne(query)
+            res.send(result)
+        })
+
         app.post('/users', async (req, res) => {
             const user = req.body;
             console.log('new user add', user)
             const result = await userConection.insertOne(user)
+            res.send(result)
+        })
+
+        app.put('/users/:id', async (req, res) => {
+            const id = req.params.id;
+            const user = req.body;
+            const filter = { _id: new ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    email: user.email,
+                    password: user.password
+                },
+            };
+            const result = await userConection.updateOne(filter, updateDoc, options);
             res.send(result)
         })
 
